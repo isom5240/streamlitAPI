@@ -1,18 +1,25 @@
-
 import streamlit as st
-from transformers import pipeline
-from io import BytesIO
+from PIL import Image
+import time
 
-# Load the TTS model
-text_to_speech = pipeline(
-    "text-to-speech",
-    model="facebook/mms-tts-eng")
+# App title
+st.title("Streamlit Demo on Hugging Face")
 
-# Generate audio
-audio = text_to_speech("This is a test")
+# Write some text
+st.write("Welcome to a demo app showcasing basic Streamlit components!")
 
-# audio["audio"] is raw WAV bytes → wrap in BytesIO
-audio_bytes = BytesIO(audio["audio"])
+# File uploader for image and audio
+uploaded_image = st.file_uploader("Upload an image", 
+                                  type=["jpg", "jpeg", "png"])
 
-# Streamlit can play from file-like objects
-st.audio(audio_bytes, format="audio/wav")
+# Display image with spinner
+if uploaded_image is not None:
+    with st.spinner("Loading image..."):
+        time.sleep(1)  # Simulate a delay
+        image = Image.open(uploaded_image)
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+
+# Button interaction
+if st.button("Click Me"):
+    st.write("🎉 You clicked the button!")
+    
