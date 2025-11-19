@@ -1,31 +1,32 @@
 
+import os
 import streamlit as st
+from transformers import pipeline
 from PIL import Image
-import time
 
-# App title
-st.title("Streamlit Demo on Hugging Face")
+st.title("Image-to-Text and Text-to-Speech App")
+HF_TOKEN = os.environ["HF_TOKEN"]
+image_to_text = pipeline(
+    "image-to-text",
+    model="nlpconnect/vit-gpt2-image-captioning",
+    token=HF_TOKEN)
+text_to_speech = pipeline(
+    "text-to-speech",
+    model="facebook/mms-tts-eng",
+    token=HF_TOKEN)
 
-# Write some text
-st.write("Welcome to a demo app showcasing basic Streamlit components!")
+uploaded_file = st.file_uploader("Upload an image", 
+                                 type=["jpg", "jpeg", "png"])
+if uploaded_file:
+    image = Image.open(uploaded_file)
+    st.image(image)
 
-# File uploader for image and audio
-uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-uploaded_audio = st.file_uploader("Upload an audio file", type=["mp3", "wav", "ogg"])
+    caption = image_to_text(image)[0]["generated_text"]
+    st.write("Caption:", caption)
 
-# Display image with spinner
-if uploaded_image is not None:
-    with st.spinner("Loading image..."):
-        time.sleep(1)  # Simulate a delay
-        image = Image.open(uploaded_image)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+    audio = text_to_speech(caption)
+    audio_path = "speech.wav"
+    with open(audio_path, "wb") as f:
+        f.write(audio["audio"])
 
-# Play audio with spinner
-if uploaded_audio is not None:
-    with st.spinner("Loading audio..."):
-        time.sleep(1)  # Simulate a delay
-        st.audio(uploaded_audio)
-
-# Button interaction
-if st.button("Click Me"):
-    st.write("🎉 You clicked the button!")
+    st.audio(audio_path)
