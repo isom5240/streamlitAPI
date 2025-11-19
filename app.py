@@ -2,7 +2,6 @@
 import streamlit as st
 from transformers import pipeline
 from io import BytesIO
-import os
 
 # Load the TTS model
 text_to_speech = pipeline(
