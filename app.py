@@ -5,19 +5,17 @@ from transformers import pipeline
 from PIL import Image
 
 st.title("Image-to-Text and Text-to-Speech App")
-HF_TOKEN = os.environ["HF_TOKEN"]
-image_to_text = pipeline(
+
+image_to_text = pipeline(
     "image-to-text",
-    model="nlpconnect/vit-gpt2-image-captioning",
-    token=HF_TOKEN)
+    model="nlpconnect/vit-gpt2-image-captioning")
 text_to_speech = pipeline(
     "text-to-speech",
-    model="facebook/mms-tts-eng",
-    token=HF_TOKEN)
+    model="facebook/mms-tts-eng")
 
 uploaded_file = st.file_uploader("Upload an image", 
                                  type=["jpg", "jpeg", "png"])
-if uploaded_file:
+if uploaded_file:
     image = Image.open(uploaded_file)
     st.image(image)
 
