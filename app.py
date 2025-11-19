@@ -1,4 +1,16 @@
 import streamlit as st
 from transformers import pipeline
 
-st.write("Hello")
+sentiment_pipeline = pipeline(model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
+
+st.title("Sentiment Analysis with HuggingFace Spaces (ISOM5240)")
+st.write("Enter a sentence to analyze its sentiment:")
+
+user_input = st.text_input("")
+if user_input:
+    result = sentiment_pipeline(user_input)
+    sentiment = result[0]["label"]
+    confidence = result[0]["score"]
+
+    st.write(f"Sentiment: {sentiment}")
+    st.write(f"Confidence: {confidence:.2f}")
