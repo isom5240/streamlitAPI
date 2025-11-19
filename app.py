@@ -13,15 +13,15 @@ text_to_speech = pipeline(
 
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
-    image = Image.open(uploaded_file)
-    st.image(image)
-
-    caption = image_to_text(image)[0]["generated_text"]
-    st.write("Caption:", caption)
-
-    audio = text_to_speech(caption)
-    audio_path = "speech.wav"
-    with open(audio_path, "wb") as f:
-      f.write(audio["audio"])
-
-    st.audio(audio_path)
+  image = Image.open(uploaded_file)
+  st.image(image)
+  
+  caption = image_to_text(image)[0]["generated_text"]
+  st.write("Caption:", caption)
+  
+  audio = text_to_speech(caption)
+  audio_path = "speech.wav"
+  with open(audio_path, "wb") as f:
+    f.write(audio["audio"])
+  
+  st.audio(audio_path)
