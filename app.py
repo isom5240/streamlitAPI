@@ -1,21 +1,32 @@
 import streamlit as st
 from transformers import pipeline
+from PIL import Image
 
-def main():
-    sentiment_pipeline = pipeline(model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
+# Load the age classification pipeline
+age_classifier = pipeline("image-classification", model="nateraw/vit-age-classifier")
 
-    st.title("Sentiment Analysis with HuggingFace Spaces (ISOM5240)")
-    st.write("Enter a sentence to analyze its sentiment:")
+def classify_age(image):
+    """Classify the age of a person in the given image."""
+    results = age_classifier(image)
+    
+    # Sort results by score in descending order
+    results = sorted(results, key=lambda x: x['score'], reverse=True)
+    
+    return results
 
-    user_input = st.text_input("")
-    if user_input:
-        result = sentiment_pipeline(user_input)
-        sentiment = result[0]["label"]
-        confidence = result[0]["score"]
+# Streamlit UI
+st.title("Age Classification using ViT")
 
-        st.write(f"Sentiment: {sentiment}")
-        st.write(f"Confidence: {confidence:.2f}")
+uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
 
-if __name__ == "__main__":
-    main()
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+    
+    # Classify age
+    age_predictions = classify_age(image)
+    
+    # Display results
+    st.subheader("Predicted Age Range:")
+    st.write(f"Age range: {age_predictions[0]['label']}")
 
